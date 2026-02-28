@@ -1,35 +1,49 @@
-# Wallpaper Vault (Next.js + Supabase)
+# Wallpaper Vault
 
-## Stack
+A personal full-stack project to host, browse, and manage a wallpaper library with a fast gallery UX.
+
+## Live Project Highlights
+- Clean gallery with search and folder filters
+- Thumbnail-first loading for fast scroll performance
+- 25 images per page with previous/next navigation
+- Dedicated wallpaper detail page with download button
+- Admin area ("Boss Cabin") for upload/delete management
+- Automatic thumbnail generation on every admin upload
+
+## Tech Stack
 - Next.js (App Router)
+- TypeScript
 - Supabase Storage
-- Vercel deployment target
+- Vercel
 
-## Features
-- Fast thumbnail gallery using Supabase image transforms
-- Full image detail page with download link
-- Admin login page
-- Admin upload and delete controls
+## Local Setup
+1. Install dependencies:
+```bash
+npm install
+```
 
-## 1) Environment
-Create `.env.local`:
-
+2. Create env file:
 ```bash
 cp .env.example .env.local
 ```
 
-Required values:
+3. Fill required env values in `.env.local`:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `SUPABASE_STORAGE_BUCKET` (default `wallpapers`)
+- `SUPABASE_STORAGE_BUCKET` (default: `wallpapers`)
 - `SUPABASE_BUCKET_PUBLIC` (`true` recommended)
 - `ADMIN_EMAIL`
 - `ADMIN_PASSWORD`
 - `ADMIN_SESSION_SECRET`
 
-## 2) Supabase setup
-Run this SQL in Supabase SQL editor:
+4. Run dev server:
+```bash
+npm run dev
+```
+
+## Supabase Storage Setup
+Run in Supabase SQL Editor:
 
 ```sql
 insert into storage.buckets (id, name, public)
@@ -50,45 +64,22 @@ using (bucket_id = 'wallpapers')
 with check (bucket_id = 'wallpapers');
 ```
 
-## 3) Install and run
-
-```bash
-npm install
-npm run dev
-```
-
-Open `http://localhost:3000`.
-
-## 4) Upload existing local wallpapers to Supabase
-
+## One-Time Bulk Upload Scripts
+Upload original images from local folder:
 ```bash
 node upload_local_to_supabase.mjs
 ```
 
-Optional source directory override:
-
-```bash
-LOCAL_WALLPAPER_DIR="4k wallpaper" node upload_local_to_supabase.mjs
-```
-
-## 4.1) Upload pre-generated thumbnails (recommended)
-
+Upload generated thumbnails to `thumbs/` in bucket:
 ```bash
 node upload_thumbnails_to_supabase.mjs
 ```
 
-Optional source directory override:
+## Deployment (Vercel)
+1. Import this repository in Vercel.
+2. Add all environment variables from `.env.local` into Vercel Project Settings.
+3. Deploy.
 
-```bash
-LOCAL_THUMBNAIL_DIR="thumbnails/4k wallpaper" node upload_thumbnails_to_supabase.mjs
-```
-
-## 5) Admin flow
-- Login: `/admin/login`
-- Dashboard: `/admin`
-- Upload and delete images there
-
-## 6) Deploy to Vercel
-- Import this repo in Vercel
-- Add same env vars in Vercel Project Settings
-- Deploy
+## Notes
+- Next.js is pinned to a patched `15.x` release to satisfy Vercel security checks.
+- Keep `SUPABASE_SERVICE_ROLE_KEY` server-only; never expose it in client code.

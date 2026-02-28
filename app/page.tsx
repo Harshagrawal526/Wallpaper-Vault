@@ -3,6 +3,8 @@ import Link from "next/link";
 import { GalleryClient } from "@/app/gallery-client";
 import { listWallpapers } from "@/lib/storage";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const wallpapers = await listWallpapers();
 
