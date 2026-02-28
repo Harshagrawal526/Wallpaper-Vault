@@ -5,8 +5,16 @@ import { listWallpapers } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams
+}: {
+  searchParams: Promise<{ page?: string; q?: string; folder?: string }>;
+}) {
   const wallpapers = await listWallpapers();
+  const params = await searchParams;
+  const initialPage = Number(params.page ?? "1");
+  const initialQuery = params.q ?? "";
+  const initialFolder = params.folder === "wallpapers" ? "root" : (params.folder ?? "all");
 
   return (
     <main className="page">
@@ -19,7 +27,12 @@ export default async function HomePage() {
           Boss Cabin
         </Link>
       </div>
-      <GalleryClient wallpapers={wallpapers} />
+      <GalleryClient
+        wallpapers={wallpapers}
+        initialPage={Number.isFinite(initialPage) && initialPage > 0 ? initialPage : 1}
+        initialQuery={initialQuery}
+        initialFolder={initialFolder}
+      />
     </main>
   );
 }

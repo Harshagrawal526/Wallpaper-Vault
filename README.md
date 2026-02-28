@@ -75,6 +75,22 @@ Upload generated thumbnails to `thumbs/` in bucket:
 node upload_thumbnails_to_supabase.mjs
 ```
 
+Cleanup stale thumbnails (dry run):
+```bash
+node cleanup_stale_thumbnails.mjs
+```
+
+Delete stale thumbnails:
+```bash
+node cleanup_stale_thumbnails.mjs --delete
+```
+
+One-time migration for PFP naming (`PFP/pfp_001.*` format):
+```bash
+node migrate_pfp_names.mjs
+node migrate_pfp_names.mjs --apply
+```
+
 ## Deployment (Vercel)
 1. Import this repository in Vercel.
 2. Add all environment variables from `.env.local` into Vercel Project Settings.

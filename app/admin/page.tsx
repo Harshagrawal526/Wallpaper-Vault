@@ -27,14 +27,25 @@ export default async function AdminPage({
       {params.success ? <p>Success: {params.success}</p> : null}
       {params.error ? <p className="error">Error: {params.error}</p> : null}
 
-      <form className="card-like" action={uploadWallpaper}>
+      <form className="card-like upload-form" action={uploadWallpaper}>
         <h3>Upload Wallpapers</h3>
-        <label htmlFor="folder">Folder path (optional)</label>
-        <input id="folder" name="folder" placeholder="anime / cars / nature" />
-        <br />
-        <label htmlFor="files">Choose files</label>
-        <input id="files" name="files" type="file" accept="image/*" multiple required />
-        <br />
+        <p>Choose what you are uploading.</p>
+        <div className="upload-form-group upload-radio-group">
+          <label>
+            <input type="radio" name="assetType" value="wallpaper" defaultChecked /> Wallpaper
+          </label>
+          <label>
+            <input type="radio" name="assetType" value="pfp" /> PFP
+          </label>
+        </div>
+        <div className="upload-form-group">
+          <label htmlFor="folder">Folder path (optional, wallpaper only)</label>
+          <input id="folder" name="folder" placeholder="anime / cars / nature" />
+        </div>
+        <div className="upload-form-group">
+          <label htmlFor="files">Choose files</label>
+          <input id="files" name="files" type="file" accept="image/*" multiple required />
+        </div>
         <button className="button" type="submit">
           Upload
         </button>

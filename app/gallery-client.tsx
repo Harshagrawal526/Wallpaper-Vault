@@ -1,15 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { type SyntheticEvent, useEffect, useMemo, useState } from "react";
+import { type SyntheticEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import type { Wallpaper } from "@/lib/storage";
 
-export function GalleryClient({ wallpapers }: { wallpapers: Wallpaper[] }) {
+export function GalleryClient({
+  wallpapers,
+  initialPage,
+  initialQuery,
+  initialFolder
+}: {
+  wallpapers: Wallpaper[];
+  initialPage: number;
+  initialQuery: string;
+  initialFolder: string;
+}) {
   const pageSize = 25;
-  const [query, setQuery] = useState("");
-  const [folder, setFolder] = useState("all");
-  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState(initialQuery);
+  const [folder, setFolder] = useState(initialFolder);
+  const [page, setPage] = useState(initialPage);
+  const isFirstFilterEffect = useRef(true);
 
   const folders = useMemo(
     () => ["all", ...Array.from(new Set(wallpapers.map((item) => item.folder))).sort()],
@@ -26,6 +37,10 @@ export function GalleryClient({ wallpapers }: { wallpapers: Wallpaper[] }) {
   }, [folder, query, wallpapers]);
 
   useEffect(() => {
+    if (isFirstFilterEffect.current) {
+      isFirstFilterEffect.current = false;
+      return;
+    }
     setPage(1);
   }, [query, folder]);
 
@@ -33,6 +48,18 @@ export function GalleryClient({ wallpapers }: { wallpapers: Wallpaper[] }) {
   const safePage = Math.min(page, totalPages);
   const pageStart = (safePage - 1) * pageSize;
   const currentItems = filtered.slice(pageStart, pageStart + pageSize);
+
+  const galleryStateQuery = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set("page", String(safePage));
+    if (query.trim()) {
+      params.set("q", query.trim());
+    }
+    if (folder !== "all") {
+      params.set("folder", folder);
+    }
+    return params.toString();
+  }, [folder, query, safePage]);
 
   const handleThumbError = (event: SyntheticEvent<HTMLImageElement>) => {
     const img = event.currentTarget;
@@ -42,6 +69,16 @@ export function GalleryClient({ wallpapers }: { wallpapers: Wallpaper[] }) {
     }
     img.dataset.usedFallback = "1";
     img.src = fallback;
+  };
+
+  const folderLabel = (value: string) => {
+    if (value === "all") {
+      return "All";
+    }
+    if (value === "root") {
+      return "wallpapers";
+    }
+    return value;
   };
 
   return (
@@ -56,7 +93,7 @@ export function GalleryClient({ wallpapers }: { wallpapers: Wallpaper[] }) {
         <select value={folder} onChange={(event) => setFolder(event.target.value)}>
           {folders.map((item) => (
             <option key={item} value={item}>
-              {item === "all" ? "All folders" : item}
+              {folderLabel(item)}
             </option>
           ))}
         </select>
@@ -66,8 +103,18 @@ export function GalleryClient({ wallpapers }: { wallpapers: Wallpaper[] }) {
       </section>
 
       <section className="gallery">
-        {currentItems.map((item) => (
-          <Link className="card" key={item.path} href={`/wallpaper/${item.path.split("/").map(encodeURIComponent).join("/")}`}>
+        {currentItems.map((item) => {
+          const backUrl = galleryStateQuery ? `/?${galleryStateQuery}` : "/";
+          const detailParams = new URLSearchParams();
+          detailParams.set("back", backUrl);
+          return (
+          <Link
+            className="card"
+            key={item.path}
+            href={`/wallpaper/${item.path.split("/").map(encodeURIComponent).join("/")}?${detailParams.toString()}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <img
               src={item.thumbUrl}
               alt={item.name}
@@ -80,10 +127,11 @@ export function GalleryClient({ wallpapers }: { wallpapers: Wallpaper[] }) {
             />
             <div className="meta">
               <p className="name">{item.name}</p>
-              <p className="folder">{item.folder}</p>
+              <p className="folder">{folderLabel(item.folder)}</p>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </section>
 
       <nav className="pagination" aria-label="Gallery pagination">

@@ -1,16 +1,19 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { wallpaperByPath } from "@/lib/storage";
+import { BackButton } from "@/app/wallpaper/[...slug]/back-button";
 
 export const dynamic = "force-dynamic";
 
 export default async function WallpaperPage({
-  params
+  params,
+  searchParams
 }: {
   params: Promise<{ slug: string[] }>;
+  searchParams: Promise<{ back?: string }>;
 }) {
   const { slug } = await params;
+  const query = await searchParams;
   const path = slug.map(decodeURIComponent).join("/");
   const wallpaper = await wallpaperByPath(path);
 
@@ -18,11 +21,11 @@ export default async function WallpaperPage({
     notFound();
   }
 
+  const backHref = query.back && query.back.startsWith("/") ? query.back : "/";
+
   return (
     <main className="detail-wrap">
-      <Link href="/" className="back-link">
-        Back to gallery
-      </Link>
+      <BackButton fallbackHref={backHref} />
       <h1>{wallpaper.name}</h1>
 
       <article className="detail-card">

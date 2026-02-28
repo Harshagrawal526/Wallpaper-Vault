@@ -133,6 +133,14 @@ a {
   margin-bottom: 0.6rem;
 }
 
+.back-link-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
 .detail-card {
   background: rgba(7, 12, 24, 0.76);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -212,6 +220,43 @@ form.card-like {
   border-radius: 1rem;
   padding: 1rem;
   margin-bottom: 1rem;
+}
+
+.upload-form h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.upload-form p {
+  margin-top: 0;
+  margin-bottom: 0.9rem;
+  color: var(--muted);
+}
+
+.upload-form-group {
+  margin-bottom: 0.9rem;
+}
+
+.upload-form-group label {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.upload-radio-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.upload-radio-group label {
+  margin-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.upload-radio-group input[type="radio"] {
+  width: auto;
 }
 
 .files {
