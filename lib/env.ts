@@ -13,7 +13,5 @@ export const env = {
   bucketName: process.env.SUPABASE_STORAGE_BUCKET ?? "wallpapers",
   bucketPublic: (process.env.SUPABASE_BUCKET_PUBLIC ?? "true") === "true",
   signedUrlExpirySeconds: Number(process.env.SUPABASE_SIGNED_URL_EXPIRES_IN ?? "3600"),
-  adminEmail: requireEnv("ADMIN_EMAIL"),
-  adminPassword: requireEnv("ADMIN_PASSWORD"),
-  adminSessionSecret: requireEnv("ADMIN_SESSION_SECRET")
+  adminEmail: requireEnv("ADMIN_EMAIL")
 };

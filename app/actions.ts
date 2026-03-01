@@ -4,9 +4,10 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import sharp from "sharp";
 
-import { clearAdminSession, isAdminAuthenticated, setAdminSession } from "@/lib/admin-auth";
+import { requireAdminUser } from "@/lib/admin";
 import { env } from "@/lib/env";
 import { createSupabaseAdminClient } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 function sanitizeFolder(folder: string): string {
   return folder.trim().replace(/^\/+|\/+$/g, "").replace(/\.\./g, "");
@@ -47,7 +48,7 @@ async function getNextSequenceStart(folder: string, prefix: "wallpaper" | "pfp")
     throw new Error(error.message);
   }
 
-  const pattern = new RegExp(`^${prefix}_(\\\\d+)\\\\.[^.]+$`, "i");
+  const pattern = new RegExp(`^${prefix}_(\\d+)\\.[^.]+$`, "i");
   let maxIndex = 0;
 
   for (const entry of data ?? []) {
@@ -70,25 +71,31 @@ async function getNextSequenceStart(folder: string, prefix: "wallpaper" | "pfp")
 export async function loginAdmin(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const supabase = await createSupabaseServerClient();
 
-  if (email !== env.adminEmail || password !== env.adminPassword) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error || !data.user?.email) {
     redirect("/admin/login?error=invalid");
   }
 
-  await setAdminSession();
+  if (data.user.email.toLowerCase() !== env.adminEmail.toLowerCase()) {
+    await supabase.auth.signOut();
+    redirect("/admin/login?error=unauthorized");
+  }
+
   redirect("/admin");
 }
 
 export async function logoutAdmin() {
-  await clearAdminSession();
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.signOut();
   redirect("/");
 }
 
 export async function uploadWallpaper(formData: FormData) {
   try {
-    if (!(await isAdminAuthenticated())) {
-      redirect("/admin/login");
-    }
+    await requireAdminUser();
 
     const files = formData.getAll("files").filter((item): item is File => item instanceof File);
     const folder = sanitizeFolder(String(formData.get("folder") ?? ""));
@@ -167,9 +174,7 @@ export async function uploadWallpaper(formData: FormData) {
 }
 
 export async function deleteWallpaper(formData: FormData) {
-  if (!(await isAdminAuthenticated())) {
-    redirect("/admin/login");
-  }
+  await requireAdminUser();
 
   const path = String(formData.get("path") ?? "").trim();
   if (!path) {

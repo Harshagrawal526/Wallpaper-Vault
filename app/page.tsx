@@ -17,13 +17,16 @@ export default async function HomePage({
   const initialFolder = params.folder === "wallpapers" ? "root" : (params.folder ?? "all");
 
   return (
-    <main className="page">
-      <header className="hero">
-        <h1>Wallpaper Vault</h1>
-        <p>Curated visuals for every mood.</p>
+    <main className="mx-auto w-[94vw] max-w-6xl py-8 text-textMain">
+      <header className="text-center">
+        <h1 className="mb-3 text-5xl font-semibold leading-none max-md:text-4xl">Wallpaper Vault</h1>
+        <p className="text-muted">Curated visuals for every mood.</p>
       </header>
-      <div className="admin-actions">
-        <Link className="button alt" href="/admin/login">
+      <div className="my-4 flex flex-wrap gap-3">
+        <Link
+          className="inline-block rounded-xl bg-white/15 px-4 py-2 text-sm font-semibold text-textMain hover:bg-white/20"
+          href="/admin/login"
+        >
           Boss Cabin
         </Link>
       </div>

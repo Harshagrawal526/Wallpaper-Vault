@@ -1,49 +1,51 @@
 # Wallpaper Vault
 
-A personal full-stack project to host, browse, and manage a wallpaper library with a fast gallery UX.
-
-## Live Project Highlights
-- Clean gallery with search and folder filters
-- Thumbnail-first loading for fast scroll performance
-- 25 images per page with previous/next navigation
-- Dedicated wallpaper detail page with download button
-- Admin area ("Boss Cabin") for upload/delete management
-- Automatic thumbnail generation on every admin upload
+A personal full-stack wallpaper gallery with admin-managed uploads, thumbnail optimization, and Supabase-backed storage.
 
 ## Tech Stack
 - Next.js (App Router)
-- TypeScript
-- Supabase Storage
+- Tailwind CSS
+- Supabase Auth + Storage
 - Vercel
 
-## Local Setup
-1. Install dependencies:
-```bash
-npm install
-```
+## Features
+- Fast gallery with thumbnail-first loading
+- Search + folder filter + pagination (25 per page)
+- Full image page with download action
+- Admin area ("Boss Cabin") for upload/delete
+- Upload mode selector: `Wallpaper` or `PFP`
+- Auto naming on upload:
+  - `wallpaper_0001.*` (and onward)
+  - `pfp_001.*` (and onward)
+- Auto thumbnail generation on upload (`thumbs/...`)
 
-2. Create env file:
+## Environment
+Create `.env.local` from example:
+
 ```bash
 cp .env.example .env.local
 ```
 
-3. Fill required env values in `.env.local`:
+Required values:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_STORAGE_BUCKET` (default: `wallpapers`)
 - `SUPABASE_BUCKET_PUBLIC` (`true` recommended)
-- `ADMIN_EMAIL`
-- `ADMIN_PASSWORD`
-- `ADMIN_SESSION_SECRET`
+- `ADMIN_EMAIL` (the only email allowed to access `/admin`)
 
-4. Run dev server:
-```bash
-npm run dev
-```
+## Admin Auth (Simple Supabase Version)
+This project now uses **Supabase email/password auth**.
+
+How it works:
+1. User logs in from `/admin/login` using Supabase Auth credentials.
+2. Server checks current authenticated user email.
+3. Admin access is allowed only when `user.email === ADMIN_EMAIL`.
+
+You should create the admin user in Supabase Auth Dashboard first.
 
 ## Supabase Storage Setup
-Run in Supabase SQL Editor:
+Run this SQL in Supabase SQL Editor:
 
 ```sql
 insert into storage.buckets (id, name, public)
@@ -64,38 +66,36 @@ using (bucket_id = 'wallpapers')
 with check (bucket_id = 'wallpapers');
 ```
 
-## One-Time Bulk Upload Scripts
-Upload original images from local folder:
+## Local Run
+```bash
+npm install
+npm run dev
+```
+
+## Bulk Scripts
+Upload originals:
 ```bash
 node upload_local_to_supabase.mjs
 ```
 
-Upload generated thumbnails to `thumbs/` in bucket:
+Upload thumbnails:
 ```bash
 node upload_thumbnails_to_supabase.mjs
 ```
 
-Cleanup stale thumbnails (dry run):
+Cleanup stale thumbnails:
 ```bash
 node cleanup_stale_thumbnails.mjs
-```
-
-Delete stale thumbnails:
-```bash
 node cleanup_stale_thumbnails.mjs --delete
 ```
 
-One-time migration for PFP naming (`PFP/pfp_001.*` format):
+Migrate existing PFP names to `pfp_001` format:
 ```bash
 node migrate_pfp_names.mjs
 node migrate_pfp_names.mjs --apply
 ```
 
-## Deployment (Vercel)
-1. Import this repository in Vercel.
-2. Add all environment variables from `.env.local` into Vercel Project Settings.
+## Deploy (Vercel)
+1. Import repo into Vercel.
+2. Add all env vars from `.env.local`.
 3. Deploy.
-
-## Notes
-- Next.js is pinned to a patched `15.x` release to satisfy Vercel security checks.
-- Keep `SUPABASE_SERVICE_ROLE_KEY` server-only; never expose it in client code.

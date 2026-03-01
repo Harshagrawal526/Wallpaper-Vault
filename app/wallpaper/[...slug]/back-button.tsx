@@ -8,7 +8,7 @@ export function BackButton({ fallbackHref }: { fallbackHref: string }) {
   return (
     <button
       type="button"
-      className="back-link back-link-button"
+      className="mb-2 inline-block bg-transparent p-0 text-sm font-semibold text-accent"
       onClick={() => {
         if (window.history.length > 1) {
           router.back();

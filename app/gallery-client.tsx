@@ -72,82 +72,84 @@ export function GalleryClient({
   };
 
   const folderLabel = (value: string) => {
-    if (value === "all") {
-      return "All";
-    }
-    if (value === "root") {
-      return "wallpapers";
-    }
+    if (value === "all") return "All";
+    if (value === "root") return "wallpapers";
     return value;
   };
 
   return (
     <>
-      <section className="toolbar" aria-label="Wallpaper controls">
+      <section className="mb-5 grid items-center gap-3 md:grid-cols-[1fr_220px_auto]" aria-label="Wallpaper controls">
         <input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search wallpapers..."
+          className="w-full rounded-xl border border-white/20 bg-[#0a1221c7] px-3 py-2 text-textMain outline-none"
         />
-        <select value={folder} onChange={(event) => setFolder(event.target.value)}>
+        <select
+          value={folder}
+          onChange={(event) => setFolder(event.target.value)}
+          className="w-full rounded-xl border border-white/20 bg-[#0a1221c7] px-3 py-2 text-textMain outline-none"
+        >
           {folders.map((item) => (
             <option key={item} value={item}>
               {folderLabel(item)}
             </option>
           ))}
         </select>
-        <p className="stats">
+        <p className="text-right text-sm text-muted max-md:text-left">
           {filtered.length} / {wallpapers.length} wallpapers
         </p>
       </section>
 
-      <section className="gallery">
+      <section className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
         {currentItems.map((item) => {
           const backUrl = galleryStateQuery ? `/?${galleryStateQuery}` : "/";
           const detailParams = new URLSearchParams();
           detailParams.set("back", backUrl);
           return (
-          <Link
-            className="card"
-            key={item.path}
-            href={`/wallpaper/${item.path.split("/").map(encodeURIComponent).join("/")}?${detailParams.toString()}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src={item.thumbUrl}
-              alt={item.name}
-              width={420}
-              height={260}
-              loading="lazy"
-              decoding="async"
-              data-fallback-src={item.fullUrl}
-              onError={handleThumbError}
-            />
-            <div className="meta">
-              <p className="name">{item.name}</p>
-              <p className="folder">{folderLabel(item.folder)}</p>
-            </div>
-          </Link>
+            <Link
+              className="block overflow-hidden rounded-2xl bg-card shadow-card transition-colors hover:bg-cardHover"
+              key={item.path}
+              href={`/wallpaper/${item.path.split("/").map(encodeURIComponent).join("/")}?${detailParams.toString()}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src={item.thumbUrl}
+                alt={item.name}
+                width={420}
+                height={260}
+                loading="lazy"
+                decoding="async"
+                data-fallback-src={item.fullUrl}
+                onError={handleThumbError}
+                className="block h-[170px] w-full object-cover max-md:h-[155px]"
+              />
+              <div className="px-3 py-2.5">
+                <p className="truncate text-sm">{item.name}</p>
+                <p className="mt-1 text-xs text-muted">{folderLabel(item.folder)}</p>
+              </div>
+            </Link>
           );
         })}
       </section>
 
-      <nav className="pagination" aria-label="Gallery pagination">
+      <nav className="mt-5 flex items-center justify-center gap-3" aria-label="Gallery pagination">
         <button
-          className="button alt"
+          className="rounded-xl bg-white/15 px-3 py-1.5 text-sm font-semibold text-textMain disabled:cursor-not-allowed disabled:opacity-45"
           type="button"
           onClick={() => setPage((value) => Math.max(1, value - 1))}
           disabled={safePage === 1}
         >
           ←
         </button>
-        <p>
+        <p className="text-sm text-muted">
           Page {safePage} of {totalPages}
         </p>
         <button
-          className="button alt"
+          className="rounded-xl bg-white/15 px-3 py-1.5 text-sm font-semibold text-textMain disabled:cursor-not-allowed disabled:opacity-45"
           type="button"
           onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
           disabled={safePage === totalPages}
