@@ -1,6 +1,8 @@
 import Link from "next/link";
 
+import { AdminToast } from "@/app/admin/admin-toast";
 import { deleteWallpaper, logoutAdmin, uploadWallpaper } from "@/app/actions";
+import { SubmitButton } from "@/app/ui-submit-button";
 import { requireAdminUser } from "@/lib/admin";
 import { listWallpapers } from "@/lib/storage";
 
@@ -21,8 +23,7 @@ export default async function AdminPage({
       </Link>
       <h1 className="mb-4 text-3xl font-semibold">Admin Dashboard</h1>
 
-      {params.success ? <p className="mb-2 text-sm text-emerald-300">Success: {params.success}</p> : null}
-      {params.error ? <p className="mb-3 text-sm text-red-300">Error: {params.error}</p> : null}
+      <AdminToast success={params.success} error={params.error} />
 
       <form className="mb-4 rounded-2xl border border-white/10 bg-[#070c18c2] p-4" action={uploadWallpaper}>
         <h3 className="mb-1 text-xl font-semibold">Upload Wallpapers</h3>
@@ -64,15 +65,19 @@ export default async function AdminPage({
           />
         </div>
 
-        <button className="rounded-xl bg-accent px-4 py-2 font-semibold text-[#081522]" type="submit">
-          Upload
-        </button>
+        <SubmitButton
+          idleText="Upload"
+          pendingText="Uploading..."
+          className="rounded-xl bg-accent px-4 py-2 font-semibold text-[#081522] disabled:cursor-not-allowed disabled:opacity-70"
+        />
       </form>
 
       <form action={logoutAdmin} className="mb-5">
-        <button className="rounded-xl bg-white/15 px-4 py-2 font-semibold text-textMain" type="submit">
-          Logout
-        </button>
+        <SubmitButton
+          idleText="Logout"
+          pendingText="Logging out..."
+          className="rounded-xl bg-white/15 px-4 py-2 font-semibold text-textMain disabled:cursor-not-allowed disabled:opacity-70"
+        />
       </form>
 
       <h3 className="mb-3 text-xl font-semibold">Current Files ({wallpapers.length})</h3>
@@ -89,9 +94,11 @@ export default async function AdminPage({
             </div>
             <form action={deleteWallpaper}>
               <input type="hidden" name="path" value={item.path} />
-              <button className="rounded-xl bg-white/15 px-3 py-1.5 text-sm font-semibold text-textMain" type="submit">
-                Delete
-              </button>
+              <SubmitButton
+                idleText="Delete"
+                pendingText="Deleting..."
+                className="rounded-xl bg-white/15 px-3 py-1.5 text-sm font-semibold text-textMain disabled:cursor-not-allowed disabled:opacity-70"
+              />
             </form>
           </div>
         ))}

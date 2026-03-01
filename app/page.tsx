@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { BossCabinButton } from "@/app/boss-cabin-button";
 import { GalleryClient } from "@/app/gallery-client";
 import { listWallpapers } from "@/lib/storage";
 
@@ -23,12 +22,7 @@ export default async function HomePage({
         <p className="text-muted">Curated visuals for every mood.</p>
       </header>
       <div className="my-4 flex flex-wrap gap-3">
-        <Link
-          className="inline-block rounded-xl bg-white/15 px-4 py-2 text-sm font-semibold text-textMain hover:bg-white/20"
-          href="/admin/login"
-        >
-          Boss Cabin
-        </Link>
+        <BossCabinButton />
       </div>
       <GalleryClient
         wallpapers={wallpapers}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { loginAdmin } from "@/app/actions";
+import { SubmitButton } from "@/app/ui-submit-button";
 
 export default async function AdminLoginPage({
   searchParams
@@ -42,9 +43,11 @@ export default async function AdminLoginPage({
             className="w-full rounded-xl border border-white/20 bg-[#0a1221c7] px-3 py-2 text-textMain outline-none"
           />
         </div>
-        <button className="rounded-xl bg-accent px-4 py-2 font-semibold text-[#081522]" type="submit">
-          Login
-        </button>
+        <SubmitButton
+          idleText="Login"
+          pendingText="Logging in..."
+          className="rounded-xl bg-accent px-4 py-2 font-semibold text-[#081522] disabled:cursor-not-allowed disabled:opacity-70"
+        />
       </form>
     </main>
   );

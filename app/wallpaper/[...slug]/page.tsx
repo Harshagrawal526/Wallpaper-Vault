@@ -1,6 +1,6 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { BackButton } from "@/app/wallpaper/[...slug]/back-button";
 import { wallpaperByPath } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +25,9 @@ export default async function WallpaperPage({
 
   return (
     <main className="mx-auto mt-5 mb-10 w-[94vw] max-w-6xl text-textMain">
-      <BackButton fallbackHref={backHref} />
+      <Link href={backHref} className="mb-2 inline-block bg-transparent p-0 text-sm font-semibold text-accent">
+        Back to gallery
+      </Link>
       <h1 className="mb-3 text-3xl font-semibold">{wallpaper.name}</h1>
 
       <article className="overflow-hidden rounded-2xl border border-white/10 bg-[#070c18c2] shadow-card">
