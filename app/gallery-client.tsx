@@ -113,6 +113,8 @@ export function GalleryClient({
               className="block overflow-hidden rounded-2xl bg-card shadow-card transition-colors hover:bg-cardHover"
               key={item.path}
               href={`/wallpaper/${item.path.split("/").map(encodeURIComponent).join("/")}?${detailParams.toString()}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <img
                 src={item.thumbUrl}

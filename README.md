@@ -2,6 +2,8 @@
 
 A personal full-stack wallpaper gallery with admin-managed uploads, thumbnail optimization, and Supabase-backed storage.
 
+Live URL: https://wallpaper-vault-eosin.vercel.app/
+
 ## Tech Stack
 - Next.js (App Router)
 - Tailwind CSS
@@ -10,7 +12,7 @@ A personal full-stack wallpaper gallery with admin-managed uploads, thumbnail op
 
 ## Features
 - Fast gallery with thumbnail-first loading
-- Search + folder filter + pagination (25 per page)
+- Search + folder filter + pagination (24 per page)
 - Full image page with download action
 - Admin area ("Boss Cabin") for upload/delete
 - Upload mode selector: `Wallpaper` or `PFP`
