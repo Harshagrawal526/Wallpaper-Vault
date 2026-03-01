@@ -16,7 +16,7 @@ export function GalleryClient({
   initialQuery: string;
   initialFolder: string;
 }) {
-  const pageSize = 25;
+  const pageSize = 24;
   const [query, setQuery] = useState(initialQuery);
   const [folder, setFolder] = useState(initialFolder);
   const [page, setPage] = useState(initialPage);
@@ -113,8 +113,6 @@ export function GalleryClient({
               className="block overflow-hidden rounded-2xl bg-card shadow-card transition-colors hover:bg-cardHover"
               key={item.path}
               href={`/wallpaper/${item.path.split("/").map(encodeURIComponent).join("/")}?${detailParams.toString()}`}
-              target="_blank"
-              rel="noopener noreferrer"
             >
               <img
                 src={item.thumbUrl}
